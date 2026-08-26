@@ -11,7 +11,8 @@
     "openMenu": "Open Menu",
     "closeMenu": "Close Menu",
     "saved": "Saved",
-    "roadmap": "Roadmap"
+    "roadmap": "Roadmap",
+    "notes": "Notes"
   },
   "common": {
     "cancel": "Cancel",
@@ -134,6 +135,38 @@
     "emptyBody": "Bookmark a course from the catalog and it will show up here.",
     "emptyCta": "Browse Courses",
     "removeBookmark": "Remove from saved"
+  },
+  "notes": {
+    "title": "My Notes",
+    "subtitle": "Every note you've written, from lessons and the AI Assistant, in one place.",
+    "searchPlaceholder": "Search your notes, courses and lessons...",
+    "allCourses": "All courses",
+    "courseFilterLabel": "Filter notes by course",
+    "sourceFilterLabel": "Filter notes by source",
+    "filterAll": "All",
+    "filterLesson": "Lesson notes",
+    "filterAI": "AI notes",
+    "badgeLesson": "Lesson",
+    "badgeAI": "AI",
+    "resultsCount": "{{count}} note",
+    "resultsCount_plural": "{{count}} notes",
+    "clearFilters": "Clear filters",
+    "noMatches": "No notes match your search.",
+    "emptyTitle": "You haven't written any notes yet",
+    "emptyBody": "Notes you take inside a lesson, and answers you save from the AI Assistant, will collect here so you can find them again.",
+    "emptyCta": "Browse Courses",
+    "edited": "(edited)",
+    "editLabel": "Edit note",
+    "deleteLabel": "Delete note",
+    "deleted": "Note deleted.",
+    "cancel": "Cancel",
+    "save": "Save",
+    "export": "Export notes",
+    "exporting": "Exporting...",
+    "exportAllCourses": "All courses",
+    "exportSuccess": "Notes exported successfully!",
+    "exportError": "Failed to export notes. Please try again.",
+    "unknownCourse": "Unknown course"
   },
   "categoryView": {
     "loading": "Loading category courses...",
