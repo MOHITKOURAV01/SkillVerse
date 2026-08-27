@@ -1,49 +1,60 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, Link } from 'react-router-dom';
-import { CheckCircle, PlayCircle, Lock, ArrowLeft, Loader2 } from 'lucide-react';
-import { CATEGORIES } from '../constants';
+import { ArrowLeft, BookOpen, Loader2 } from 'lucide-react';
+import { CATEGORIES, COURSES } from '../constants';
 import { storageService } from '../services/storageService';
-import NotFound from './NotFound';
 import { firestoreService } from '../services/firestoreService';
+import { courseBookmarks } from '../utils/courseBookmarks';
+import { useBookmarks } from '../hooks/useBookmarks';
+import { isCourseUnlocked, getIncompletePrerequisites } from '../utils/prerequisites';
 import { Course } from '../types';
+import { CourseCard } from './ui/CourseCard';
+import { CourseLoadError } from './CourseLoadError';
+import NotFound from './NotFound';
 
 export const CategoryView: React.FC = () => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const category = CATEGORIES.find(c => c.id === id);
-  const [courses, setCourses] = useState<Course[]>([]);
+
+  // The bundled catalogue is the floor, not an error path: every other listing
+  // falls back to it, and without that this page rendered an empty grid
+  // whenever Firestore was unseeded, offline, or refused the read.
+  const [courses, setCourses] = useState<Course[]>(COURSES);
   const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const bookmarkedIds = useBookmarks();
+
+  const loadCategoryCourses = useCallback(async () => {
+    setLoading(true);
+    setLoadFailed(false);
+
+    try {
+      const all = await firestoreService.getCourses();
+      setCourses(all && all.length > 0 ? all : COURSES);
+    } catch (error) {
+      console.error('Error fetching courses for category:', error);
+      setCourses(COURSES);
+      // Only surface the error screen when the bundled catalogue has nothing
+      // for this category either — otherwise the page is perfectly usable and
+      // an error state would be noise.
+      setLoadFailed(!COURSES.some(c => c.categoryId === id));
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
 
   useEffect(() => {
-    const loadCategoryCourses = async () => {
-      try {
-        const all = await firestoreService.getCourses();
-        const filtered = all.filter(c => c.categoryId === id);
-        setCourses(filtered);
-      } catch (error) {
-        console.error('Error fetching courses for category:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
     loadCategoryCourses();
-  }, [id]);
+  }, [loadCategoryCourses]);
 
   const progress = useMemo(() => storageService.getAllProgress(), []);
 
-  const getDifficultyLabel = (level: string) => {
-    switch (level) {
-      case 'Beginner':
-        return t('common.difficulty.beginner');
-      case 'Intermediate':
-        return t('common.difficulty.intermediate');
-      case 'Advanced':
-        return t('common.difficulty.advanced');
-      default:
-        return level;
-    }
-  };
+  const categoryCourses = useMemo(
+    () => courses.filter(course => course.categoryId === id),
+    [courses, id]
+  );
 
   const categoryTitle = category
     ? t(`categoryView.categories.${category.id}.title`, { defaultValue: category.title })
@@ -60,15 +71,23 @@ export const CategoryView: React.FC = () => {
     return (
       <div className="min-h-[400px] flex flex-col items-center justify-center">
         <Loader2 className="animate-spin text-primaryLight w-12 h-12" />
-        <div className="mt-4 text-textMuted text-sm font-medium animate-pulse">{t('categoryView.loading')}</div>
+        <div className="mt-4 text-textMuted text-sm font-medium animate-pulse">
+          {t('categoryView.loading')}
+        </div>
       </div>
     );
   }
 
+  if (loadFailed) {
+    return <CourseLoadError onRetry={loadCategoryCourses} />;
+  }
 
   return (
     <div className="animate-fade-in">
-      <Link to="/" className="inline-flex items-center text-textMuted hover:text-textMain mb-8 transition-colors">
+      <Link
+        to="/"
+        className="inline-flex items-center text-textMuted hover:text-textMain mb-8 transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primaryLight"
+      >
         <ArrowLeft size={20} className="mr-2" /> {t('categoryView.backToDashboard')}
       </Link>
 
@@ -77,54 +96,43 @@ export const CategoryView: React.FC = () => {
         <p className="text-xl text-textMuted max-w-2xl">{categoryDescription}</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {courses.map(course => {
-          const courseProgress = progress.find(p => p.courseId === course.id);
-          const isPassed = courseProgress?.passed;
+      {categoryCourses.length === 0 ? (
+        <div className="text-center py-20">
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+            <BookOpen className="text-primaryLight" size={28} />
+          </div>
+          <h2 className="text-xl font-bold text-textMain mb-2">No courses in this category yet</h2>
+          <p className="text-textMuted mb-6 max-w-md mx-auto">
+            Nothing has been published here so far. Browse the full catalogue in the meantime.
+          </p>
+          <Link
+            to="/courses"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-main text-white font-bold shadow hover:scale-105 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primaryLight focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          >
+            <BookOpen size={16} /> {t('courses.title')}
+          </Link>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {categoryCourses.map(course => {
+            const isLocked = !isCourseUnlocked(course, progress);
 
-          return (
-            <Link
-              key={course.id}
-              to={`/course/${course.id}`}
-              className={`relative bg-glass border border-black/20 dark:border-white/20 dark:border-white/10 rounded-2xl p-6 transition-all duration-300 hover:border-black/20 dark:border-white/40 hover:shadow-xl group overflow-hidden`}
-            >
-              {isPassed && (
-                <div className="absolute top-4 right-4 text-success">
-                  <CheckCircle size={24} />
-                </div>
-              )}
-
-              <div className="mb-4">
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${course.level === 'Beginner' ? 'bg-emerald-500/20 text-emerald-500 dark:text-emerald-300' :
-                    course.level === 'Intermediate' ? 'bg-blue-500/20 text-blue-500 dark:text-blue-300' :
-                      'bg-purple-500/20 text-purple-500 dark:text-purple-300'
-                  }`}>
-                  {getDifficultyLabel(course.level)}
-                </span>
-              </div>
-
-              <h3 className="text-xl font-bold text-textMain mb-2 group-hover:text-primaryLight transition-colors">
-                {course.title}
-              </h3>
-              <p className="text-sm text-textMuted mb-6 line-clamp-2">
-                {course.description}
-              </p>
-
-              <div className="flex items-center justify-between text-sm text-textMuted">
-                <span>{course.duration}</span>
-                <span className="flex items-center text-textMain font-medium group-hover:translate-x-1 transition-transform">
-                  {isPassed ? t('categoryView.review') : t('categoryView.start')} <PlayCircle size={16} className="ml-2" />
-                </span>
-              </div>
-
-              {/* Progress Bar at bottom */}
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-black/5 dark:bg-white/5">
-                {isPassed && <div className="h-full bg-success w-full" />}
-              </div>
-            </Link>
-          );
-        })}
-      </div>
+            return (
+              <CourseCard
+                key={course.id}
+                course={course}
+                isPassed={progress.find(p => p.courseId === course.id)?.passed}
+                isLocked={isLocked}
+                incompletePrerequisites={
+                  isLocked ? getIncompletePrerequisites(course, courses, progress) : []
+                }
+                isBookmarked={bookmarkedIds.includes(course.id)}
+                onToggleBookmark={courseBookmarks.toggleBookmark}
+              />
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
