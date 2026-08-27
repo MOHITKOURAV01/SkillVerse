@@ -194,6 +194,19 @@
       "backToCourses": "코스 목록으로"
     }
   },
+  "courseReview": {
+    "title": "평점 및 리뷰",
+    "subtitle": "다른 학습자들이 이 강의를 어떻게 평가했는지 확인해 보세요",
+    "ratePrompt": "이 강의 평가하기",
+    "updatePrompt": "평점 수정하기",
+    "placeholder": "이 강의에 대한 경험을 공유해 주세요 (선택 사항)...",
+    "submitError": "리뷰를 저장하지 못했습니다. 연결 상태를 확인한 후 다시 시도해 주세요.",
+    "submitButton": "리뷰 등록",
+    "updateButton": "리뷰 수정",
+    "loginRequired": "이 강의를 평가하고 리뷰를 남기려면 로그인해 주세요.",
+    "emptyTitle": "아직 리뷰가 없습니다",
+    "emptySubtitle": "이 강의를 가장 먼저 평가해 보세요!"
+  },
   "aiAssistant": {
     "welcome": "안녕하세요! **{{courseTitle}}** 코스의 AI 튜터입니다.\n\n개념 설명, 예시 제공, 학습 내용에 대한 퀴즈 출제를 도와드릴 수 있습니다. 오늘 어떤 것을 도와드릴까요?",
     "fallbackResponse": "답변을 생성할 수 없습니다. 다시 시도해 주세요.",
@@ -505,7 +518,8 @@
       "description": "은(는) 다음 과정을 성공적으로 이수하고 모든 요구 사항을 충족했습니다:",
       "passingScore": "합격 점수: {{score}}%",
       "verifiedAchievement": "인증된 성과"
-    }
+    },
+    "linkCopiedToast": "인증서 링크가 클립보드에 복사되었습니다!"
   },
   "lessonDiscussion": {
     "title": "강의 토론 및 Q&A",

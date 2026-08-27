@@ -172,10 +172,10 @@ export const CourseReview: React.FC<CourseReviewProps> = ({ courseId, user }) =>
                     </div>
                     <div>
                         <h3 className="text-xl font-bold text-textMain">
-                            {t('courseReview.title', 'Ratings & Reviews')}
+                            {t('courseReview.title')}
                         </h3>
                         <p className="text-xs text-textMuted mt-0.5">
-                            {t('courseReview.subtitle', 'See what other learners think of this course')}
+                            {t('courseReview.subtitle')}
                         </p>
                     </div>
                 </div>
@@ -195,7 +195,7 @@ export const CourseReview: React.FC<CourseReviewProps> = ({ courseId, user }) =>
             {user ? (
                 <form onSubmit={handleSubmit} className="p-4 rounded-xl bg-white/40 dark:bg-white/5 border border-black/10 dark:border-white/10 space-y-3">
                     <p className="text-sm font-medium text-textMain">
-                        {myReview ? t('courseReview.updatePrompt', 'Update your rating') : t('courseReview.ratePrompt', 'Rate this course')}
+                        {myReview ? t('courseReview.updatePrompt') : t('courseReview.ratePrompt')}
                     </p>
                     <div className="flex items-center gap-1" onMouseLeave={() => setHoverRating(0)}>
                         {[1, 2, 3, 4, 5].map(i => (
@@ -218,15 +218,12 @@ export const CourseReview: React.FC<CourseReviewProps> = ({ courseId, user }) =>
                         rows={2}
                         value={comment}
                         onChange={e => setComment(e.target.value)}
-                        placeholder={t('courseReview.placeholder', 'Share your experience with this course (optional)...')}
+                        placeholder={t('courseReview.placeholder')}
                         className="w-full bg-black/5 dark:bg-white/5 border border-black/20 dark:border-white/10 rounded-xl p-3 text-sm text-textMain placeholder:text-textMuted focus:outline-none focus:border-primaryLight focus:ring-1 focus:ring-primaryLight transition-all resize-none"
                     />
                     {submitError && (
                         <p role="alert" className="text-sm text-red-500 dark:text-red-400">
-                            {t(
-                                'courseReview.submitError',
-                                "We couldn't save your review. Check your connection and try again."
-                            )}
+                            {t('courseReview.submitError')}
                         </p>
                     )}
                     <div className="flex justify-end gap-2">
@@ -247,13 +244,13 @@ export const CourseReview: React.FC<CourseReviewProps> = ({ courseId, user }) =>
                             className="flex items-center gap-2 px-5 py-2 rounded-lg bg-gradient-main text-white font-bold text-sm shadow hover:scale-105 transition-all disabled:opacity-50 disabled:hover:scale-100"
                         >
                             {submitting ? <Loader2 size={14} className="animate-spin" /> : <MessageSquareText size={14} />}
-                            {myReview ? t('courseReview.updateButton', 'Update Review') : t('courseReview.submitButton', 'Submit Review')}
+                            {myReview ? t('courseReview.updateButton') : t('courseReview.submitButton')}
                         </button>
                     </div>
                 </form>
             ) : (
                 <div className="p-4 rounded-xl bg-white/5 border border-black/10 dark:border-white/10 text-center text-textMuted text-sm">
-                    {t('courseReview.loginRequired', 'Please log in to rate and review this course.')}
+                    {t('courseReview.loginRequired')}
                 </div>
             )}
 
@@ -266,8 +263,8 @@ export const CourseReview: React.FC<CourseReviewProps> = ({ courseId, user }) =>
             ) : reviews.length === 0 ? (
                 <div className="text-center py-10 text-textMuted border border-dashed border-black/10 dark:border-white/10 rounded-xl">
                     <Star size={32} className="mx-auto mb-2 opacity-50 text-primaryLight" />
-                    <p className="font-medium text-sm">{t('courseReview.emptyTitle', 'No reviews yet')}</p>
-                    <p className="text-xs mt-1">{t('courseReview.emptySubtitle', 'Be the first to rate this course!')}</p>
+                    <p className="font-medium text-sm">{t('courseReview.emptyTitle')}</p>
+                    <p className="text-xs mt-1">{t('courseReview.emptySubtitle')}</p>
                 </div>
             ) : (
                 <div className="space-y-4">

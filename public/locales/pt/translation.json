@@ -194,6 +194,19 @@
       "backToCourses": "Voltar aos cursos"
     }
   },
+  "courseReview": {
+    "title": "Avaliações e comentários",
+    "subtitle": "Veja o que outros alunos acham deste curso",
+    "ratePrompt": "Avalie este curso",
+    "updatePrompt": "Atualize sua avaliação",
+    "placeholder": "Compartilhe sua experiência com este curso (opcional)...",
+    "submitError": "Não foi possível salvar sua avaliação. Verifique sua conexão e tente novamente.",
+    "submitButton": "Enviar avaliação",
+    "updateButton": "Atualizar avaliação",
+    "loginRequired": "Faça login para avaliar e comentar este curso.",
+    "emptyTitle": "Ainda não há avaliações",
+    "emptySubtitle": "Seja o primeiro a avaliar este curso!"
+  },
   "aiAssistant": {
     "welcome": "Olá! Sou o seu tutor de IA para **{{courseTitle}}**.\n\nPosso explicar conceitos, dar exemplos ou fazer um teste sobre o que aprendeu. Como posso ajudar hoje?",
     "fallbackResponse": "Não foi possível gerar uma resposta. Por favor, tente novamente.",
@@ -505,7 +518,8 @@
       "description": "concluiu com sucesso e dominou todos os requisitos para",
       "passingScore": "Pontuação Mínima: {{score}}%",
       "verifiedAchievement": "Conquista Verificada"
-    }
+    },
+    "linkCopiedToast": "Link do certificado copiado para a área de transferência!"
   },
   "lessonDiscussion": {
     "title": "Discussão da Aula e Perguntas",

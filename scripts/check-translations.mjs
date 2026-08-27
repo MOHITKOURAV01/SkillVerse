@@ -18,6 +18,13 @@
  *                       the translation. A dropped or renamed placeholder
  *                       renders literally ("+{{xp}} XP") to the user.
  *
+ * And one check in the other direction:
+ *
+ *   4. Unknown keys   — every literal `t('some.key')` in the source must exist
+ *                       in en. i18next returns the key itself when it cannot
+ *                       resolve one, so a typo or a stale namespace renders the
+ *                       raw string "some.key" on screen in every language.
+ *
  * Usage:
  *   node scripts/check-translations.mjs
  *   npm run check:translations
@@ -35,6 +42,18 @@ const SOURCE_LOCALE = 'en';
 const FILENAME = 'translation.json';
 
 const PLACEHOLDER_PATTERN = /\{\{\s*([\w.]+)\s*\}\}/g;
+
+/**
+ * Matches `t('a.b.c')` / `t("a.b.c")` only. Dynamic keys built from template
+ * literals (e.g. `t(\`categoryView.categories.${id}.title\`)`) cannot be
+ * resolved statically and are deliberately skipped — those call sites pass a
+ * `defaultValue` for exactly that reason.
+ */
+const T_CALL_PATTERN = /\bt\(\s*['"]([A-Za-z0-9_.]+)['"]/g;
+
+/** Directories that never contain app source. */
+const IGNORED_DIRS = new Set(['node_modules', 'dist', '.git', 'functions', 'public']);
+const SOURCE_EXTENSIONS = ['.ts', '.tsx'];
 
 /** Flattens a nested translation object into `a.b.c` -> value pairs. */
 const flatten = (value, prefix = '', out = new Map()) => {
@@ -66,6 +85,40 @@ const readLocale = (locale) => {
   } catch (error) {
     throw new Error(`Could not read ${path}: ${error.message}`);
   }
+};
+
+/** Recursively collects every app source file worth scanning for t() calls. */
+const listSourceFiles = (dir, out = []) => {
+  for (const entry of readdirSync(dir)) {
+    if (IGNORED_DIRS.has(entry)) continue;
+
+    const full = join(dir, entry);
+    if (statSync(full).isDirectory()) {
+      listSourceFiles(full, out);
+    } else if (SOURCE_EXTENSIONS.some((ext) => entry.endsWith(ext))) {
+      out.push(full);
+    }
+  }
+  return out;
+};
+
+/**
+ * Every statically-resolvable translation key referenced in the source, mapped
+ * to the files that reference it (so a failure points somewhere).
+ */
+const collectUsedKeys = () => {
+  const used = new Map();
+
+  for (const file of listSourceFiles(ROOT)) {
+    const source = readFileSync(file, 'utf8');
+    for (const match of source.matchAll(T_CALL_PATTERN)) {
+      const key = match[1];
+      if (!used.has(key)) used.set(key, new Set());
+      used.get(key).add(file.slice(ROOT.length + 1));
+    }
+  }
+
+  return used;
 };
 
 const listLocales = () =>
@@ -133,6 +186,24 @@ const main = () => {
     }
 
     console.log('');
+  }
+
+  // --- Direction 2: keys the code asks for that en does not define -----------
+  const usedKeys = collectUsedKeys();
+  const unknownKeys = [...usedKeys.keys()].filter((key) => !source.has(key)).sort();
+
+  if (unknownKeys.length === 0) {
+    console.log(`\n✔ source — ${usedKeys.size} translation key(s) referenced, all defined in "${SOURCE_LOCALE}"`);
+  } else {
+    failed = true;
+    console.log(`\n✖ source — ${unknownKeys.length} key(s) referenced but not defined in "${SOURCE_LOCALE}":`);
+    for (const key of unknownKeys) {
+      console.log(`     - ${key}  (${[...usedKeys.get(key)].sort().join(', ')})`);
+    }
+    console.log(
+      '\n   i18next returns the key itself when it cannot resolve one, so each of\n' +
+        '   these renders as the literal string above, in every language.'
+    );
   }
 
   if (failed) {

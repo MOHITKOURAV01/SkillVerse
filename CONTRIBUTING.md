@@ -222,6 +222,13 @@ filter were English in all eleven non-English locales.
 | Missing keys | A key in `en` that a locale does not have |
 | Stray keys | A key a locale still has that `en` no longer defines |
 | Placeholders | A `{{name}}` that a translation dropped or renamed |
+| Unknown keys | A `t('some.key')` in the source that `en` does not define |
+
+The last one runs in the opposite direction. i18next returns the key itself
+when it cannot resolve one, so `t('certificatePage.copyLink')` against a
+namespace actually called `certificate` renders the literal text
+"certificatePage.copyLink" on the page — in English too, not just in the
+translated locales.
 
 If you do not speak a language, it is still better to add the key with a
 reasonable translation and flag it in the PR description than to leave it out —

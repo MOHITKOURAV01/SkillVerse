@@ -194,6 +194,19 @@
       "backToCourses": "Torna ai corsi"
     }
   },
+  "courseReview": {
+    "title": "Valutazioni e recensioni",
+    "subtitle": "Scopri cosa pensano gli altri studenti di questo corso",
+    "ratePrompt": "Valuta questo corso",
+    "updatePrompt": "Aggiorna la tua valutazione",
+    "placeholder": "Condividi la tua esperienza con questo corso (facoltativo)...",
+    "submitError": "Non siamo riusciti a salvare la tua recensione. Controlla la connessione e riprova.",
+    "submitButton": "Invia recensione",
+    "updateButton": "Aggiorna recensione",
+    "loginRequired": "Accedi per valutare e recensire questo corso.",
+    "emptyTitle": "Ancora nessuna recensione",
+    "emptySubtitle": "Sii il primo a valutare questo corso!"
+  },
   "aiAssistant": {
     "welcome": "Ciao! Sono il tuo tutor IA per **{{courseTitle}}**.\n\nPosso spiegarti concetti, fornirti esempi o farti domande su ciò che hai imparato. Come posso aiutarti oggi?",
     "fallbackResponse": "Impossibile generare una risposta. Riprova.",
@@ -505,7 +518,8 @@
       "description": "ha completato con successo tutti i requisiti previsti per",
       "passingScore": "Punteggio di superamento: {{score}}%",
       "verifiedAchievement": "Traguardo Verificato"
-    }
+    },
+    "linkCopiedToast": "Link del certificato copiato negli appunti!"
   },
   "lessonDiscussion": {
     "title": "Discussione della Lezione e Domande",

@@ -194,6 +194,19 @@
       "backToCourses": "Zurück zu den Kursen"
     }
   },
+  "courseReview": {
+    "title": "Bewertungen & Rezensionen",
+    "subtitle": "Sehen Sie, was andere Lernende über diesen Kurs denken",
+    "ratePrompt": "Diesen Kurs bewerten",
+    "updatePrompt": "Bewertung aktualisieren",
+    "placeholder": "Teilen Sie Ihre Erfahrung mit diesem Kurs (optional)...",
+    "submitError": "Ihre Bewertung konnte nicht gespeichert werden. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "submitButton": "Bewertung absenden",
+    "updateButton": "Bewertung aktualisieren",
+    "loginRequired": "Bitte melden Sie sich an, um diesen Kurs zu bewerten.",
+    "emptyTitle": "Noch keine Bewertungen",
+    "emptySubtitle": "Bewerten Sie diesen Kurs als Erste(r)!"
+  },
   "aiAssistant": {
     "welcome": "Hallo! Ich bin Ihr KI-Tutor für **{{courseTitle}}**.\n\nIch kann Ihnen Konzepte erklären, Beispiele geben oder Sie über das Gelernte abfragen. Wie kann ich Ihnen heute helfen?",
     "fallbackResponse": "Konnte keine Antwort generieren. Bitte versuchen Sie es erneut.",
@@ -505,7 +518,8 @@
       "description": "hat alle Anforderungen erfolgreich erfüllt und gemeistert für",
       "passingScore": "Bestehensquote: {{score}}%",
       "verifiedAchievement": "Verifizierte Leistung"
-    }
+    },
+    "linkCopiedToast": "Zertifikatslink in die Zwischenablage kopiert!"
   },
   "lessonDiscussion": {
     "title": "Lektionsdiskussion & Fragen",

@@ -194,6 +194,19 @@
       "backToCourses": "返回课程列表"
     }
   },
+  "courseReview": {
+    "title": "评分与评价",
+    "subtitle": "看看其他学习者对这门课程的评价",
+    "ratePrompt": "为这门课程评分",
+    "updatePrompt": "更新你的评分",
+    "placeholder": "分享你对这门课程的体验（可选）……",
+    "submitError": "无法保存你的评价。请检查网络连接后重试。",
+    "submitButton": "提交评价",
+    "updateButton": "更新评价",
+    "loginRequired": "请登录后为这门课程评分和评价。",
+    "emptyTitle": "暂无评价",
+    "emptySubtitle": "成为第一个评价这门课程的人！"
+  },
   "aiAssistant": {
     "welcome": "您好！我是 **{{courseTitle}}** 的 AI 学习导师。\n\n我可以为您解答概念、提供示例，或者针对您所学的知识点进行测验。今天有什么我可以帮您的吗？",
     "fallbackResponse": "无法生成回答，请重试。",
@@ -505,7 +518,8 @@
       "description": "已顺利满足本课程的所有要求并圆满结业",
       "passingScore": "合格分数：{{score}}%",
       "verifiedAchievement": "认证成就"
-    }
+    },
+    "linkCopiedToast": "证书链接已复制到剪贴板！"
   },
   "lessonDiscussion": {
     "title": "课程讨论与问答",

@@ -194,6 +194,19 @@
       "backToCourses": "コース一覧に戻る"
     }
   },
+  "courseReview": {
+    "title": "評価とレビュー",
+    "subtitle": "他の受講者がこのコースをどう評価しているか見てみましょう",
+    "ratePrompt": "このコースを評価する",
+    "updatePrompt": "評価を更新する",
+    "placeholder": "このコースの感想を共有してください（任意）...",
+    "submitError": "レビューを保存できませんでした。接続を確認してもう一度お試しください。",
+    "submitButton": "レビューを投稿",
+    "updateButton": "レビューを更新",
+    "loginRequired": "このコースを評価・レビューするにはログインしてください。",
+    "emptyTitle": "まだレビューはありません",
+    "emptySubtitle": "最初にこのコースを評価しましょう！"
+  },
   "aiAssistant": {
     "welcome": "こんにちは！**{{courseTitle}}** のAIチューターです。\n\n概念の解説や例題の提示、学習内容に関するクイズを出題できます。今日はどのようなお手伝いをしましょうか？",
     "fallbackResponse": "応答を生成できませんでした。もう一度お試しください。",
@@ -505,7 +518,8 @@
       "description": "は、本コースの全要件を完了し、優秀な成果を収めました",
       "passingScore": "合格スコア: {{score}}%",
       "verifiedAchievement": "認証された実績"
-    }
+    },
+    "linkCopiedToast": "証明書のリンクをクリップボードにコピーしました。"
   },
   "lessonDiscussion": {
     "title": "レッスンディスカッション & Q&A",

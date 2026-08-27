@@ -194,6 +194,19 @@
       "backToCourses": "Back to courses"
     }
   },
+  "courseReview": {
+    "title": "Ratings & Reviews",
+    "subtitle": "See what other learners think of this course",
+    "ratePrompt": "Rate this course",
+    "updatePrompt": "Update your rating",
+    "placeholder": "Share your experience with this course (optional)...",
+    "submitError": "We couldn't save your review. Check your connection and try again.",
+    "submitButton": "Submit Review",
+    "updateButton": "Update Review",
+    "loginRequired": "Please log in to rate and review this course.",
+    "emptyTitle": "No reviews yet",
+    "emptySubtitle": "Be the first to rate this course!"
+  },
   "aiAssistant": {
     "welcome": "Hi there! I'm your AI tutor for **{{courseTitle}}**.\n\nI can explain concepts, give you examples, or quiz you on what you've learned. How can I help you today?",
     "fallbackResponse": "I couldn't generate a response. Please try again.",
@@ -505,7 +518,8 @@
       "description": "has successfully completed and mastered all requirements for",
       "passingScore": "Passing Score: {{score}}%",
       "verifiedAchievement": "Verified Achievement"
-    }
+    },
+    "linkCopiedToast": "Certificate link copied to your clipboard!"
   },
   "lessonDiscussion": {
     "title": "Lesson Discussion & Q&A",

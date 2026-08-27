@@ -194,6 +194,19 @@
       "backToCourses": "Retour aux cours"
     }
   },
+  "courseReview": {
+    "title": "Notes et avis",
+    "subtitle": "Découvrez ce que les autres apprenants pensent de ce cours",
+    "ratePrompt": "Notez ce cours",
+    "updatePrompt": "Modifier votre note",
+    "placeholder": "Partagez votre expérience de ce cours (facultatif)...",
+    "submitError": "Nous n'avons pas pu enregistrer votre avis. Vérifiez votre connexion et réessayez.",
+    "submitButton": "Publier l'avis",
+    "updateButton": "Modifier l'avis",
+    "loginRequired": "Connectez-vous pour noter et commenter ce cours.",
+    "emptyTitle": "Aucun avis pour l'instant",
+    "emptySubtitle": "Soyez le premier à noter ce cours !"
+  },
   "aiAssistant": {
     "welcome": "Bonjour ! Je suis votre tuteur IA pour **{{courseTitle}}**.\n\nJe peux vous expliquer des concepts, donner des exemples ou vous interroger sur ce que vous avez appris. Comment puis-je vous aider aujourd'hui ?",
     "fallbackResponse": "Impossible de générer une réponse. Veuillez réessayer.",
@@ -505,7 +518,8 @@
       "description": "a validé avec succès l'ensemble des exigences pour",
       "passingScore": "Score de réussite : {{score}}%",
       "verifiedAchievement": "Réussite vérifiée"
-    }
+    },
+    "linkCopiedToast": "Lien du certificat copié dans le presse-papiers !"
   },
   "lessonDiscussion": {
     "title": "Discussion et questions-réponses de la leçon",

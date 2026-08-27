@@ -196,7 +196,7 @@ export const Certificate: React.FC = () => {
 
     navigator.clipboard.writeText(url);
     setCopied(true);
-    showToast({ message: t('certificatePage.linkCopiedToast'), type: 'success' });
+    showToast({ message: t('certificate.linkCopiedToast'), type: 'success' });
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -212,13 +212,13 @@ export const Certificate: React.FC = () => {
             className="flex items-center gap-2 bg-white/5 dark:bg-white/10 text-textMain px-4 py-2 rounded-lg hover:bg-white/10 dark:hover:bg-white/20 transition-all font-medium border border-black/20 dark:border-white/10"
           >
             {copied ? <CheckCircle size={18} className="text-success" /> : <LinkIcon size={18} />}
-            {copied ? t('certificatePage.linkCopied') : t('certificatePage.copyLink')}
+            {copied ? t('certificate.linkCopied') : t('certificate.copyLink')}
           </button>
           <button
             onClick={handleShareTwitter}
             className="flex items-center gap-2 bg-white/5 dark:bg-white/10 text-textMain px-4 py-2 rounded-lg hover:bg-white/10 dark:hover:bg-white/20 transition-all font-medium border border-black/20 dark:border-white/10 group"
           >
-            <Twitter size={18} className="text-[#1DA1F2] group-hover:scale-110 transition-transform" /> {t('certificatePage.shareTwitter')}
+            <Twitter size={18} className="text-[#1DA1F2] group-hover:scale-110 transition-transform" /> {t('certificate.shareTwitter')}
           </button>
           <button
             onClick={handleShareLinkedIn}
@@ -226,7 +226,7 @@ export const Certificate: React.FC = () => {
             className="flex items-center gap-2 bg-white/5 dark:bg-white/10 text-textMain px-4 py-2 rounded-lg hover:bg-white/10 dark:hover:bg-white/20 transition-all font-medium border border-black/20 dark:border-white/10 disabled:opacity-50 group"
           >
             {isSharing ? <Loader2 size={18} className="animate-spin" /> : <Linkedin size={18} className="text-[#0A66C2] fill-[#0A66C2] group-hover:scale-110 transition-transform" />}
-            {isSharing ? t('certificatePage.sharing') : t('certificatePage.shareLinkedIn')}
+            {isSharing ? t('certificate.sharing') : t('certificate.shareLinkedIn')}
           </button>
           <button
             onClick={handleDownloadPDF}
@@ -234,7 +234,7 @@ export const Certificate: React.FC = () => {
             className="flex items-center gap-2 bg-gradient-main text-white px-6 py-2 rounded-lg hover:shadow-lg hover:shadow-primary/20 transition-all font-medium disabled:opacity-50"
           >
             {isDownloading ? <Loader2 size={18} className="animate-spin" /> : <Printer size={18} />}
-            {isDownloading ? t('certificatePage.generatingPDF') : t('certificatePage.downloadPDF')}
+            {isDownloading ? t('certificate.generatingPdf') : t('certificate.downloadPdf')}
           </button>
         </div>
       </div>
