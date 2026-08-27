@@ -1,8 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Editor from '@monaco-editor/react';
-import { Play, RotateCcw, Terminal, AlertTriangle, Save, FolderOpen, Trash2, X } from 'lucide-react';
+import { Play, RotateCcw, Terminal, AlertTriangle, Save, FolderOpen, Trash2, X, Square } from 'lucide-react';
 import { storageService } from '../services/storageService';
 import { SavedSnippet } from '../types';
+import {
+  SANDBOX_MAX_LOGS,
+  SANDBOX_TIMEOUT_MS,
+  buildSandboxDocument,
+  createRunId,
+  parseSandboxMessage,
+  toUserLineNumber,
+} from '../utils/sandboxRuntime';
 
 interface CodePlaygroundProps {
   initialCode: string;
@@ -15,10 +23,21 @@ interface LogEntry {
 
 interface RuntimeError {
   message: string;
+  /** Already mapped back to the learner's own line numbering. */
   line?: number;
   col?: number;
   stack?: string;
 }
+
+/** Maps a sandbox console message type onto the log entry style. */
+const LOG_TYPE_BY_MESSAGE: Record<string, LogEntry['type']> = {
+  'console-log': 'log',
+  'console-error': 'error',
+  'console-warn': 'warn',
+};
+
+/** Reads the current app theme off the root element. */
+const readIsDark = (): boolean => document.documentElement.classList.contains('dark');
 
 export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) => {
   const [code, setCode] = useState(initialCode);
@@ -26,7 +45,7 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
   const [error, setError] = useState<RuntimeError | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
   const [srcDoc, setSrcDoc] = useState('');
-  const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
+  const [isDark, setIsDark] = useState(readIsDark);
 
   const [savedSnippets, setSavedSnippets] = useState<SavedSnippet[]>([]);
   const [showSnippetsPanel, setShowSnippetsPanel] = useState(false);
@@ -60,6 +79,97 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
   const terminalContainerRef = useRef<HTMLDivElement>(null);
   const terminalEndRef = useRef<HTMLDivElement>(null);
 
+  // Identifies the run currently being listened for. Messages carrying any
+  // other id belong to a run the learner has already replaced, and are
+  // dropped rather than appended to what is on screen.
+  const runIdRef = useRef<string | null>(null);
+
+  // Follow the app theme so the editor is not left on the previous colour
+  // scheme after a light/dark switch. The theme is applied by Layout as a
+  // class on <html>, so that is what we observe.
+  useEffect(() => {
+    const sync = () => setIsDark(readIsDark());
+    sync();
+
+    const observer = new MutationObserver(sync);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
+  const clearRunTimeout = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
+
+  /**
+   * Ends the current run: stops listening for its messages, drops the
+   * timeout, and tears down the iframe so a program still looping inside it
+   * cannot keep burning CPU after the learner has moved on.
+   */
+  const stopRun = useCallback(() => {
+    runIdRef.current = null;
+    clearRunTimeout();
+    setIsExecuting(false);
+    setSrcDoc('');
+  }, [clearRunTimeout]);
+
+  /**
+   * The other half of the sandbox contract.
+   *
+   * `event.source` is compared against this playground's own iframe because a
+   * lesson page can mount several playgrounds at once (CourseView renders one
+   * per code block), and every one of them has a listener attached to the
+   * same window. `parseSandboxMessage` then rejects anything that is not a
+   * well-formed message for the run we are actually waiting on.
+   */
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      const runId = runIdRef.current;
+      if (!runId) return;
+      if (event.source !== iframeRef.current?.contentWindow) return;
+
+      const message = parseSandboxMessage(event.data, runId);
+      if (!message) return;
+
+      if (message.type === 'execution-success') {
+        // The program reached the end of its synchronous body. Anything it
+        // scheduled with setTimeout is deliberately not waited for - the
+        // playground reports the run, not the event loop.
+        stopRun();
+        return;
+      }
+
+      if (message.type === 'runtime-error') {
+        setError({
+          message: message.message || 'Unknown error',
+          line: toUserLineNumber(message.line),
+          col: message.col,
+          stack: message.stack,
+        });
+        stopRun();
+        return;
+      }
+
+      const logType = LOG_TYPE_BY_MESSAGE[message.type];
+      if (!logType) return;
+
+      setLogs(prev => {
+        const next = [...prev, { type: logType, message: message.message ?? '' }];
+        // Keep the tail: the end of a runaway loop is what explains it.
+        return next.length > SANDBOX_MAX_LOGS ? next.slice(-SANDBOX_MAX_LOGS) : next;
+      });
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [stopRun]);
+
+  // Never leave a timer or a running iframe behind on unmount - CourseView
+  // mounts and unmounts these as the learner moves between lessons.
+  useEffect(() => clearRunTimeout, [clearRunTimeout]);
+
   // Scroll to bottom of terminal inside container only without moving page viewport
   useEffect(() => {
     if (terminalContainerRef.current) {
@@ -68,95 +178,53 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
   }, [logs, error]);
 
   const handleExecute = () => {
+    // Replace any run still in flight so its messages cannot interleave with
+    // the new one's output.
+    clearRunTimeout();
+
+    const runId = createRunId();
+    runIdRef.current = runId;
+
     setLogs([]);
     setError(null);
     setIsExecuting(true);
 
-    // Build standard sandboxed html context
-    const htmlContent = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <script>
-            // Overwrite console methods to forward to parent window
-            window.console = {
-              log: function(...args) {
-                const formatted = args.map(arg => {
-                  if (arg === null) return 'null';
-                  if (arg === undefined) return 'undefined';
-                  if (typeof arg === 'object') {
-                    try {
-                      return JSON.stringify(arg, null, 2);
-                    } catch (e) {
-                      return String(arg);
-                    }
-                  }
-                  return String(arg);
-                }).join(' ');
-                window.parent.postMessage({ type: 'console-log', message: formatted }, '*');
-              },
-              error: function(...args) {
-                const formatted = args.join(' ');
-                window.parent.postMessage({ type: 'console-error', message: formatted }, '*');
-              },
-              warn: function(...args) {
-                const formatted = args.join(' ');
-                window.parent.postMessage({ type: 'console-warn', message: formatted }, '*');
-              }
-            };
+    // Remounting the iframe on every run - rather than reusing one document -
+    // is what guarantees a clean global scope, so a `const` declared last time
+    // does not make this run fail with "already been declared".
+    setSrcDoc('');
+    const doc = buildSandboxDocument(code, runId);
+    // Defer by a frame so React tears the old iframe down before the new
+    // srcDoc is applied; setting both in one commit reuses the same element.
+    requestAnimationFrame(() => {
+      if (runIdRef.current !== runId) return;
+      setSrcDoc(doc);
+    });
 
-            // Catch any compilation/uncaught exceptions
-            window.onerror = function(message, source, lineno, colno, errorObj) {
-              window.parent.postMessage({
-                type: 'runtime-error',
-                message: errorObj ? errorObj.message : message,
-                line: lineno,
-                col: colno,
-                stack: errorObj ? errorObj.stack : ''
-              }, '*');
-              return true;
-            };
-          </script>
-        </head>
-        <body>
-          <script>
-            try {
-              // Execute user code
-              ${code}
-              // Signal success
-              window.parent.postMessage({ type: 'execution-success' }, '*');
-            } catch (err) {
-              window.parent.postMessage({
-                type: 'runtime-error',
-                message: err.message,
-                stack: err.stack
-              }, '*');
-            }
-          </script>
-        </body>
-      </html>
-    `;
-
-    setSrcDoc(htmlContent);
-
-    // Guard against infinite loop scenarios with a 4-second timeout limit
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    // Infinite-loop guard. A sandbox that never reaches its completion signal
+    // is either looping forever or blocked, and either way the learner needs
+    // the editor back.
     timeoutRef.current = setTimeout(() => {
-      setIsExecuting(false);
-      setLogs(prev => [...prev, { type: 'error', message: 'Execution timed out (possible infinite loop detected).' }]);
-    }, 4000);
+      if (runIdRef.current !== runId) return;
+      setLogs(prev => [
+        ...prev,
+        { type: 'error', message: 'Execution timed out after 4s (possible infinite loop).' },
+      ]);
+      stopRun();
+    }, SANDBOX_TIMEOUT_MS);
+  };
+
+  const handleStop = () => {
+    if (!isExecuting) return;
+    setLogs(prev => [...prev, { type: 'warn', message: 'Execution stopped.' }]);
+    stopRun();
   };
 
   const handleReset = () => {
+    stopRun();
     setCode(initialCode);
     setLogs([]);
     setError(null);
-    setIsExecuting(false);
-    setSrcDoc('');
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
   };
 
   return (
@@ -205,6 +273,19 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
             Reset
           </button>
 
+          {isExecuting && (
+            <button
+              type="button"
+              onClick={handleStop}
+              title="Stop the running program"
+              aria-label="Stop the running program"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-textMuted hover:text-textMain hover:bg-black/5 dark:hover:bg-white/5 rounded-lg border border-black/10 dark:border-white/5 font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primaryLight"
+            >
+              <Square size={12} fill="currentColor" />
+              Stop
+            </button>
+          )}
+
           <button
             type="button"
             onClick={handleExecute}
@@ -252,8 +333,10 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
         />
       </div>
 
-      {/* Sandbox IFrame */}
-      {isExecuting && srcDoc && (
+      {/* Sandbox iframe. `allow-scripts` without `allow-same-origin` puts the
+          document in an opaque origin, so learner code cannot touch this page,
+          its storage, or its cookies - postMessage is the only way out. */}
+      {srcDoc && (
         <iframe
           ref={iframeRef}
           style={{ display: 'none' }}
@@ -269,6 +352,12 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
         <div className="flex items-center gap-2 mb-3 text-textMuted select-none border-b border-white/5 pb-2">
           <Terminal size={14} className="text-primaryLight" />
           <span className="font-bold uppercase tracking-wider text-[10px]">Console Output</span>
+          {logs.length > 0 && (
+            <span className="ml-auto text-[10px] font-mono opacity-60">
+              {logs.length}
+              {logs.length >= SANDBOX_MAX_LOGS ? `+ (showing last ${SANDBOX_MAX_LOGS})` : ''}
+            </span>
+          )}
         </div>
 
         {/* Terminal logs list with ref */}
@@ -290,7 +379,8 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
                 <div className="font-bold text-sm">Runtime Error: {error.message}</div>
                 {error.line !== undefined && (
                   <div className="text-[11px] opacity-75 font-semibold">
-                    at line {error.line - 17} {/* Adjust line offset inside HTML template */}
+                    at line {error.line}
+                    {error.col !== undefined ? `, column ${error.col}` : ''}
                   </div>
                 )}
                 {error.stack && (
