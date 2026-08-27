@@ -36,6 +36,21 @@ const LOG_TYPE_BY_MESSAGE: Record<string, LogEntry['type']> = {
   'console-warn': 'warn',
 };
 
+/**
+ * How the last run ended. `idle` is the never-run state; the rest are what the
+ * console footer reports, so a program that completes without printing
+ * anything is distinguishable from one that produced no output because the
+ * run never reported back.
+ */
+type RunStatus = 'idle' | 'running' | 'finished' | 'failed' | 'timeout' | 'stopped';
+
+const RUN_STATUS_LABELS: Record<Exclude<RunStatus, 'idle' | 'running'>, string> = {
+  finished: 'Program finished',
+  failed: 'Program threw an error',
+  timeout: 'Execution timed out',
+  stopped: 'Execution stopped',
+};
+
 /** Reads the current app theme off the root element. */
 const readIsDark = (): boolean => document.documentElement.classList.contains('dark');
 
@@ -45,6 +60,8 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
   const [error, setError] = useState<RuntimeError | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
   const [srcDoc, setSrcDoc] = useState('');
+  const [status, setStatus] = useState<RunStatus>('idle');
+  const [durationMs, setDurationMs] = useState<number | null>(null);
   const [isDark, setIsDark] = useState(readIsDark);
 
   const [savedSnippets, setSavedSnippets] = useState<SavedSnippet[]>([]);
@@ -76,6 +93,8 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** Pending frame that applies the next srcDoc, so it can be cancelled. */
+  const frameRef = useRef<number | null>(null);
   const terminalContainerRef = useRef<HTMLDivElement>(null);
   const terminalEndRef = useRef<HTMLDivElement>(null);
 
@@ -83,6 +102,9 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
   // other id belong to a run the learner has already replaced, and are
   // dropped rather than appended to what is on screen.
   const runIdRef = useRef<string | null>(null);
+
+  /** Wall-clock start of the current run, used for the elapsed-time readout. */
+  const startedAtRef = useRef<number>(0);
 
   // Follow the app theme so the editor is not left on the previous colour
   // scheme after a light/dark switch. The theme is applied by Layout as a
@@ -96,10 +118,15 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
     return () => observer.disconnect();
   }, []);
 
+  /** Drops both pending callbacks a run can leave behind. */
   const clearRunTimeout = useCallback(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
+    }
+    if (frameRef.current !== null) {
+      cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
     }
   }, []);
 
@@ -108,12 +135,17 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
    * timeout, and tears down the iframe so a program still looping inside it
    * cannot keep burning CPU after the learner has moved on.
    */
-  const stopRun = useCallback(() => {
-    runIdRef.current = null;
-    clearRunTimeout();
-    setIsExecuting(false);
-    setSrcDoc('');
-  }, [clearRunTimeout]);
+  const stopRun = useCallback(
+    (outcome: Exclude<RunStatus, 'running'>) => {
+      if (runIdRef.current) setDurationMs(Date.now() - startedAtRef.current);
+      runIdRef.current = null;
+      clearRunTimeout();
+      setIsExecuting(false);
+      setSrcDoc('');
+      setStatus(outcome);
+    },
+    [clearRunTimeout]
+  );
 
   /**
    * The other half of the sandbox contract.
@@ -137,7 +169,7 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
         // The program reached the end of its synchronous body. Anything it
         // scheduled with setTimeout is deliberately not waited for - the
         // playground reports the run, not the event loop.
-        stopRun();
+        stopRun('finished');
         return;
       }
 
@@ -148,7 +180,7 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
           col: message.col,
           stack: message.stack,
         });
-        stopRun();
+        stopRun('failed');
         return;
       }
 
@@ -166,8 +198,9 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
     return () => window.removeEventListener('message', handleMessage);
   }, [stopRun]);
 
-  // Never leave a timer or a running iframe behind on unmount - CourseView
-  // mounts and unmounts these as the learner moves between lessons.
+  // Never leave a timer, a queued frame, or a running iframe behind on
+  // unmount - CourseView mounts and unmounts these as the learner moves
+  // between lessons.
   useEffect(() => clearRunTimeout, [clearRunTimeout]);
 
   // Scroll to bottom of terminal inside container only without moving page viewport
@@ -188,6 +221,9 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
     setLogs([]);
     setError(null);
     setIsExecuting(true);
+    setStatus('running');
+    setDurationMs(null);
+    startedAtRef.current = Date.now();
 
     // Remounting the iframe on every run - rather than reusing one document -
     // is what guarantees a clean global scope, so a `const` declared last time
@@ -196,7 +232,8 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
     const doc = buildSandboxDocument(code, runId);
     // Defer by a frame so React tears the old iframe down before the new
     // srcDoc is applied; setting both in one commit reuses the same element.
-    requestAnimationFrame(() => {
+    frameRef.current = requestAnimationFrame(() => {
+      frameRef.current = null;
       if (runIdRef.current !== runId) return;
       setSrcDoc(doc);
     });
@@ -210,18 +247,18 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
         ...prev,
         { type: 'error', message: 'Execution timed out after 4s (possible infinite loop).' },
       ]);
-      stopRun();
+      stopRun('timeout');
     }, SANDBOX_TIMEOUT_MS);
   };
 
   const handleStop = () => {
     if (!isExecuting) return;
-    setLogs(prev => [...prev, { type: 'warn', message: 'Execution stopped.' }]);
-    stopRun();
+    stopRun('stopped');
   };
 
   const handleReset = () => {
-    stopRun();
+    stopRun('idle');
+    setDurationMs(null);
     setCode(initialCode);
     setLogs([]);
     setError(null);
@@ -362,8 +399,13 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
 
         {/* Terminal logs list with ref */}
         <div ref={terminalContainerRef} className="space-y-2 max-h-[160px] overflow-y-auto pr-2 custom-scrollbar">
-          {logs.length === 0 && !error && (
+          {status === 'idle' && logs.length === 0 && !error && (
             <div className="text-textMuted/60 italic select-none">Click "Run Code" to view execution results.</div>
+          )}
+          {status === 'finished' && logs.length === 0 && !error && (
+            <div className="text-textMuted/60 italic select-none">
+              Program finished without printing anything.
+            </div>
           )}
           {logs.map((log, i) => (
             <div key={i} className={`flex items-start gap-2 ${log.type === 'error' ? 'text-red-400' : log.type === 'warn' ? 'text-yellow-400' : 'text-emerald-400'}`}>
@@ -393,6 +435,27 @@ export const CodePlayground: React.FC<CodePlaygroundProps> = ({ initialCode }) =
           )}
           <div ref={terminalEndRef} />
         </div>
+
+        {status !== 'idle' && status !== 'running' && (
+          <div
+            className="flex items-center gap-2 mt-3 pt-2 border-t border-white/5 text-[10px] uppercase tracking-wider font-bold select-none"
+            role="status"
+            aria-live="polite"
+          >
+            <span
+              className={
+                status === 'finished'
+                  ? 'text-emerald-400'
+                  : status === 'stopped'
+                    ? 'text-yellow-400'
+                    : 'text-red-400'
+              }
+            >
+              {RUN_STATUS_LABELS[status]}
+            </span>
+            {durationMs !== null && <span className="text-textMuted/60">in {durationMs} ms</span>}
+          </div>
+        )}
       </div>
 
       {/* Save Snippet Dialog */}
