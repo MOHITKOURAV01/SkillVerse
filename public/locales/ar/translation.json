@@ -10,7 +10,8 @@
     "menu": "القائمة",
     "openMenu": "فتح القائمة",
     "closeMenu": "إغلاق القائمة",
-    "saved": "المحفوظة"
+    "saved": "المحفوظة",
+    "roadmap": "خارطة الطريق"
   },
   "common": {
     "cancel": "إلغاء",
@@ -77,6 +78,18 @@
       "title": "سجل المقابلات التجريبية",
       "emptyMessage": "ابدأ مقابلة تجريبية في وضع المسار المهني لاختبار مهاراتك في بيئة واقعية.",
       "button": "بدء مقابلة تجريبية"
+    },
+    "dailyChallenge": {
+      "title": "التحدي اليومي",
+      "progressMessage": "تم إنجاز {{completed}}/{{total}} — حافظ على سلسلتك!",
+      "completeMessage": "اكتمل التحدي اليومي! عمل رائع اليوم.",
+      "bonusXp": "+{{xp}} نقطة خبرة إضافية",
+      "bonusClaimed": "تم استلام المكافأة",
+      "startButton": "ابدأ التحدي",
+      "reviewButton": "راجع مرة أخرى",
+      "toast": {
+        "bonusAwarded": "اكتمل التحدي اليومي! تم منحك +{{xp}} نقطة خبرة إضافية."
+      }
     }
   },
   "courses": {
@@ -106,7 +119,13 @@
     "resultsCount_plural": "تم العثور على {{count}} دورة",
     "clearFilters": "مسح عوامل التصفية",
     "bookmarkAdd": "حفظ الدورة",
-    "bookmarkRemove": "إزالة من المحفوظات"
+    "bookmarkRemove": "إزالة من المحفوظات",
+    "timeFilterTitle": "تصفية حسب المدة",
+    "allDurations": "جميع المدد",
+    "timeUnder30": "أقل من 30 دقيقة",
+    "time30to60": "30–60 دقيقة",
+    "time1to2h": "1–2 ساعة",
+    "time2hPlus": "أكثر من ساعتين"
   },
   "savedCourses": {
     "title": "الدورات المحفوظة",

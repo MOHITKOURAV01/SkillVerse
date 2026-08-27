@@ -10,7 +10,8 @@
     "menu": "Menú",
     "openMenu": "Abrir Menú",
     "closeMenu": "Cerrar Menú",
-    "saved": "Guardados"
+    "saved": "Guardados",
+    "roadmap": "Ruta de aprendizaje"
   },
   "common": {
     "cancel": "Cancelar",
@@ -77,6 +78,18 @@
       "title": "Historial de entrevistas simuladas",
       "emptyMessage": "Inicia una entrevista simulada en el modo Carrera para poner a prueba tus habilidades en condiciones reales.",
       "button": "Iniciar entrevista simulada"
+    },
+    "dailyChallenge": {
+      "title": "Reto diario",
+      "progressMessage": "{{completed}}/{{total}} completados: ¡mantén tu racha!",
+      "completeMessage": "¡Reto diario completado! Buen trabajo hoy.",
+      "bonusXp": "+{{xp}} XP de bonificación",
+      "bonusClaimed": "Bonificación reclamada",
+      "startButton": "Empezar reto",
+      "reviewButton": "Repasar de nuevo",
+      "toast": {
+        "bonusAwarded": "¡Reto diario completado! Se han otorgado +{{xp}} XP de bonificación."
+      }
     }
   },
   "courses": {
@@ -106,7 +119,13 @@
     "resultsCount_plural": "{{count}} cursos encontrados",
     "clearFilters": "Borrar filtros",
     "bookmarkAdd": "Guardar curso",
-    "bookmarkRemove": "Quitar de guardados"
+    "bookmarkRemove": "Quitar de guardados",
+    "timeFilterTitle": "Filtrar por duración",
+    "allDurations": "Todas las duraciones",
+    "timeUnder30": "Menos de 30 min",
+    "time30to60": "30–60 min",
+    "time1to2h": "1–2 horas",
+    "time2hPlus": "Más de 2 horas"
   },
   "savedCourses": {
     "title": "Cursos guardados",

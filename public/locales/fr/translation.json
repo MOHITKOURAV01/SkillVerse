@@ -10,7 +10,8 @@
     "menu": "Menu",
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
-    "saved": "Enregistrés"
+    "saved": "Enregistrés",
+    "roadmap": "Feuille de route"
   },
   "common": {
     "cancel": "Annuler",
@@ -77,6 +78,18 @@
       "title": "Historique des entretiens blancs",
       "emptyMessage": "Lancez un entretien blanc en Mode Carrière pour tester vos compétences dans des conditions réelles.",
       "button": "Commencer l'entretien blanc"
+    },
+    "dailyChallenge": {
+      "title": "Défi du jour",
+      "progressMessage": "{{completed}}/{{total}} terminés — gardez votre série !",
+      "completeMessage": "Défi du jour terminé ! Beau travail aujourd'hui.",
+      "bonusXp": "+{{xp}} XP bonus",
+      "bonusClaimed": "Bonus récupéré",
+      "startButton": "Commencer le défi",
+      "reviewButton": "Revoir",
+      "toast": {
+        "bonusAwarded": "Défi du jour terminé ! Bonus de +{{xp}} XP accordé."
+      }
     }
   },
   "courses": {
@@ -106,7 +119,13 @@
     "resultsCount_plural": "{{count}} cours trouvés",
     "clearFilters": "Effacer les filtres",
     "bookmarkAdd": "Enregistrer le cours",
-    "bookmarkRemove": "Retirer des enregistrés"
+    "bookmarkRemove": "Retirer des enregistrés",
+    "timeFilterTitle": "Filtrer par durée",
+    "allDurations": "Toutes les durées",
+    "timeUnder30": "Moins de 30 min",
+    "time30to60": "30–60 min",
+    "time1to2h": "1–2 heures",
+    "time2hPlus": "Plus de 2 heures"
   },
   "savedCourses": {
     "title": "Cours enregistrés",

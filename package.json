@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "check:translations": "node scripts/check-translations.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -10,7 +10,8 @@
     "menu": "メニュー",
     "openMenu": "メニューを開く",
     "closeMenu": "メニューを閉じる",
-    "saved": "保存済み"
+    "saved": "保存済み",
+    "roadmap": "ロードマップ"
   },
   "common": {
     "cancel": "キャンセル",
@@ -77,6 +78,18 @@
       "title": "模擬面接の履歴",
       "emptyMessage": "キャリアモードで模擬面接を開始し、実践的な環境でスキルを試してみましょう。",
       "button": "模擬面接を開始"
+    },
+    "dailyChallenge": {
+      "title": "デイリーチャレンジ",
+      "progressMessage": "{{completed}}/{{total}} 完了 — 連続記録を守りましょう！",
+      "completeMessage": "デイリーチャレンジ達成！今日もお疲れさまでした。",
+      "bonusXp": "+{{xp}} XP ボーナス",
+      "bonusClaimed": "ボーナス受取済み",
+      "startButton": "チャレンジを開始",
+      "reviewButton": "もう一度復習",
+      "toast": {
+        "bonusAwarded": "デイリーチャレンジ達成！+{{xp}} XP のボーナスを獲得しました。"
+      }
     }
   },
   "courses": {
@@ -106,7 +119,13 @@
     "resultsCount_plural": "{{count}}件のコースが見つかりました",
     "clearFilters": "フィルターをクリア",
     "bookmarkAdd": "コースを保存",
-    "bookmarkRemove": "保存済みから削除"
+    "bookmarkRemove": "保存済みから削除",
+    "timeFilterTitle": "所要時間で絞り込む",
+    "allDurations": "すべての所要時間",
+    "timeUnder30": "30分未満",
+    "time30to60": "30〜60分",
+    "time1to2h": "1〜2時間",
+    "time2hPlus": "2時間以上"
   },
   "savedCourses": {
     "title": "保存済みコース",

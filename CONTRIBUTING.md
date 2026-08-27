@@ -15,6 +15,7 @@ Whether you're fixing a bug, improving the UI, or adding new features, we apprec
 - [Local Development Setup](#local-development-setup)
 - [Project Structure](#project-structure)
 - [Development Guidelines](#development-guidelines)
+- [Internationalization (i18n)](#internationalization-i18n)
 - [Pull Request Guidelines](#pull-request-guidelines)
 - [Issue Workflow](#issue-workflow)
 - [Code Review Expectations](#code-review-expectations)
@@ -112,6 +113,16 @@ npm run preview
 >
 > **Expectation**: Ensure your IDE is configured to use TypeScript strictly (as defined in `tsconfig.json`) and verify that `npm run build` succeeds before opening a PR. Please match the existing code formatting manually.
 
+### 7. Verify translation parity
+
+```bash
+npm run check:translations
+```
+
+Compares every locale under `public/locales` against `en` and fails if any of
+them has drifted. See [Internationalization (i18n)](#internationalization-i18n)
+below. This also runs in CI on every pull request.
+
 ---
 
 ## Project Structure
@@ -179,6 +190,45 @@ Understanding the repository layout will help you navigate the codebase:
 
 ---
 
+## Internationalization (i18n)
+
+SkillVerse ships in **twelve languages**. Translations live in
+`public/locales/<lang>/translation.json` and are fetched at runtime by
+`i18n.ts` — they are not bundled.
+
+### Adding or changing a user-facing string
+
+1. Add the key to `public/locales/en/translation.json` first. `en` is the
+   source of truth and defines both the key set and the key order.
+2. Add the same key to **all eleven other locale files**:
+   `ar`, `de`, `es`, `fr`, `hi`, `it`, `ja`, `ko`, `pt`, `ru`, `zh`.
+3. Keep every `{{placeholder}}` from the English string in the translation.
+   Word order can change; the placeholder names cannot.
+4. Run `npm run check:translations` before opening the PR.
+
+### Why this is enforced
+
+`i18n.ts` sets `fallbackLng: 'en'`, so a missing key does **not** throw — it
+quietly renders the English string inside an otherwise translated page. Nothing
+fails, nothing is logged, and the gap is only visible to someone actually using
+that language. Three features shipped that way before this check existed: the
+Roadmap nav entry, the entire Daily Challenge card, and the course duration
+filter were English in all eleven non-English locales.
+
+`npm run check:translations` reports three kinds of drift:
+
+| Check | What it catches |
+| --- | --- |
+| Missing keys | A key in `en` that a locale does not have |
+| Stray keys | A key a locale still has that `en` no longer defines |
+| Placeholders | A `{{name}}` that a translation dropped or renamed |
+
+If you do not speak a language, it is still better to add the key with a
+reasonable translation and flag it in the PR description than to leave it out —
+a wrong translation gets corrected, a missing one is invisible.
+
+---
+
 ## Pull Request Guidelines
 
 ### Branch Naming
@@ -205,6 +255,7 @@ Use descriptive branch names prefixing the type of work:
 
 - [ ] Have I tested this locally using `npm run dev`?
 - [ ] Does `npm run build` complete without TypeScript errors?
+- [ ] If I added or changed a user-facing string, does `npm run check:translations` pass?
 - [ ] Does the UI adhere to the dark-mode-first glassmorphism aesthetic?
 - [ ] Did I remove all `console.log` statements used for debugging?
 

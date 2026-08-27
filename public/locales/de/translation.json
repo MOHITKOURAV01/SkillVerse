@@ -10,7 +10,8 @@
     "menu": "Menü",
     "openMenu": "Menü öffnen",
     "closeMenu": "Menü schließen",
-    "saved": "Gespeichert"
+    "saved": "Gespeichert",
+    "roadmap": "Lernpfad"
   },
   "common": {
     "cancel": "Abbrechen",
@@ -77,6 +78,18 @@
       "title": "Verlauf der Test-Interviews",
       "emptyMessage": "Starten Sie ein Test-Interview im Karrieremodus, um Ihre Fähigkeiten unter realen Bedingungen zu testen.",
       "button": "Test-Interview starten"
+    },
+    "dailyChallenge": {
+      "title": "Tägliche Herausforderung",
+      "progressMessage": "{{completed}}/{{total}} erledigt – halte deine Serie am Leben!",
+      "completeMessage": "Tägliche Herausforderung geschafft! Gute Arbeit heute.",
+      "bonusXp": "+{{xp}} XP Bonus",
+      "bonusClaimed": "Bonus erhalten",
+      "startButton": "Herausforderung starten",
+      "reviewButton": "Erneut wiederholen",
+      "toast": {
+        "bonusAwarded": "Tägliche Herausforderung geschafft! +{{xp}} XP Bonus gutgeschrieben."
+      }
     }
   },
   "courses": {
@@ -106,7 +119,13 @@
     "resultsCount_plural": "{{count}} Kurse gefunden",
     "clearFilters": "Filter zurücksetzen",
     "bookmarkAdd": "Kurs speichern",
-    "bookmarkRemove": "Aus Gespeichert entfernen"
+    "bookmarkRemove": "Aus Gespeichert entfernen",
+    "timeFilterTitle": "Nach Dauer filtern",
+    "allDurations": "Alle Dauern",
+    "timeUnder30": "Unter 30 Min.",
+    "time30to60": "30–60 Min.",
+    "time1to2h": "1–2 Stunden",
+    "time2hPlus": "Über 2 Stunden"
   },
   "savedCourses": {
     "title": "Gespeicherte Kurse",

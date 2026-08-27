@@ -10,7 +10,8 @@
     "menu": "मेनू",
     "openMenu": "मेनू खोलें",
     "closeMenu": "मेनू बंद करें",
-    "saved": "सहेजे गए"
+    "saved": "सहेजे गए",
+    "roadmap": "रोडमैप"
   },
   "common": {
     "cancel": "रद्द करें",
@@ -77,6 +78,18 @@
       "title": "मॉक इंटरव्यू का इतिहास",
       "emptyMessage": "वास्तविक परिस्थितियों में अपने कौशल का परीक्षण करने के लिए करियर मोड में मॉक इंटरव्यू शुरू करें।",
       "button": "मॉक इंटरव्यू शुरू करें"
+    },
+    "dailyChallenge": {
+      "title": "दैनिक चुनौती",
+      "progressMessage": "{{completed}}/{{total}} पूरे — अपनी स्ट्रीक बनाए रखें!",
+      "completeMessage": "दैनिक चुनौती पूरी! आज बढ़िया काम किया।",
+      "bonusXp": "+{{xp}} XP बोनस",
+      "bonusClaimed": "बोनस प्राप्त",
+      "startButton": "चुनौती शुरू करें",
+      "reviewButton": "फिर से दोहराएँ",
+      "toast": {
+        "bonusAwarded": "दैनिक चुनौती पूरी! +{{xp}} XP बोनस मिला।"
+      }
     }
   },
   "courses": {
@@ -106,7 +119,13 @@
     "resultsCount_plural": "{{count}} कोर्स मिले",
     "clearFilters": "फ़िल्टर साफ़ करें",
     "bookmarkAdd": "कोर्स सहेजें",
-    "bookmarkRemove": "सहेजे गए से हटाएं"
+    "bookmarkRemove": "सहेजे गए से हटाएं",
+    "timeFilterTitle": "अवधि के अनुसार फ़िल्टर करें",
+    "allDurations": "सभी अवधियाँ",
+    "timeUnder30": "30 मिनट से कम",
+    "time30to60": "30–60 मिनट",
+    "time1to2h": "1–2 घंटे",
+    "time2hPlus": "2+ घंटे"
   },
   "savedCourses": {
     "title": "सहेजे गए कोर्स",

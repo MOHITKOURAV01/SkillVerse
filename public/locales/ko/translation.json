@@ -10,7 +10,8 @@
     "menu": "메뉴",
     "openMenu": "메뉴 열기",
     "closeMenu": "메뉴 닫기",
-    "saved": "저장됨"
+    "saved": "저장됨",
+    "roadmap": "로드맵"
   },
   "common": {
     "cancel": "취소",
@@ -77,6 +78,18 @@
       "title": "모의 면접 기록",
       "emptyMessage": "실제 환경에서 실력을 테스트하려면 커리어 모드에서 모의 면접을 시작하세요.",
       "button": "모의 면접 시작"
+    },
+    "dailyChallenge": {
+      "title": "오늘의 챌린지",
+      "progressMessage": "{{completed}}/{{total}} 완료 — 연속 기록을 이어가세요!",
+      "completeMessage": "오늘의 챌린지 완료! 오늘도 수고하셨습니다.",
+      "bonusXp": "+{{xp}} XP 보너스",
+      "bonusClaimed": "보너스 수령 완료",
+      "startButton": "챌린지 시작",
+      "reviewButton": "다시 복습",
+      "toast": {
+        "bonusAwarded": "오늘의 챌린지 완료! +{{xp}} XP 보너스를 받았습니다."
+      }
     }
   },
   "courses": {
@@ -106,7 +119,13 @@
     "resultsCount_plural": "{{count}}개의 강좌를 찾았습니다",
     "clearFilters": "필터 초기화",
     "bookmarkAdd": "강좌 저장",
-    "bookmarkRemove": "저장 목록에서 제거"
+    "bookmarkRemove": "저장 목록에서 제거",
+    "timeFilterTitle": "소요 시간으로 필터",
+    "allDurations": "모든 소요 시간",
+    "timeUnder30": "30분 미만",
+    "time30to60": "30–60분",
+    "time1to2h": "1–2시간",
+    "time2hPlus": "2시간 이상"
   },
   "savedCourses": {
     "title": "저장한 강좌",

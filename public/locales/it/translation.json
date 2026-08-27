@@ -10,7 +10,8 @@
     "menu": "Menu",
     "openMenu": "Apri Menu",
     "closeMenu": "Chiudi Menu",
-    "saved": "Salvati"
+    "saved": "Salvati",
+    "roadmap": "Percorso di apprendimento"
   },
   "common": {
     "cancel": "Annulla",
@@ -77,6 +78,18 @@
       "title": "Cronologia colloqui di prova",
       "emptyMessage": "Avvia un colloquio di prova in Modalità Carriera per testare le tue competenze in condizioni reali.",
       "button": "Inizia colloquio di prova"
+    },
+    "dailyChallenge": {
+      "title": "Sfida giornaliera",
+      "progressMessage": "{{completed}}/{{total}} completate — mantieni la tua serie!",
+      "completeMessage": "Sfida giornaliera completata! Ottimo lavoro oggi.",
+      "bonusXp": "+{{xp}} XP bonus",
+      "bonusClaimed": "Bonus riscattato",
+      "startButton": "Inizia la sfida",
+      "reviewButton": "Ripassa di nuovo",
+      "toast": {
+        "bonusAwarded": "Sfida giornaliera completata! Bonus di +{{xp}} XP assegnato."
+      }
     }
   },
   "courses": {
@@ -106,7 +119,13 @@
     "resultsCount_plural": "{{count}} corsi trovati",
     "clearFilters": "Cancella filtri",
     "bookmarkAdd": "Salva corso",
-    "bookmarkRemove": "Rimuovi dai salvati"
+    "bookmarkRemove": "Rimuovi dai salvati",
+    "timeFilterTitle": "Filtra per durata",
+    "allDurations": "Tutte le durate",
+    "timeUnder30": "Meno di 30 min",
+    "time30to60": "30–60 min",
+    "time1to2h": "1–2 ore",
+    "time2hPlus": "Oltre 2 ore"
   },
   "savedCourses": {
     "title": "Corsi salvati",
