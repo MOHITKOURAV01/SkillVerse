@@ -9,7 +9,6 @@ import {
   Settings,
   Menu,
   X,
-  AlertTriangle,
   Briefcase,
   Shield,
   Code2,
@@ -25,6 +24,7 @@ import { CommandPalette } from './CommandPalette';
 import { ShortcutsModal } from './ShortcutsModal';
 import { XP_STORE_THEMES, XP_STORE_FRAMES } from '../constants';
 import { useStudyReminders } from '../hooks/useStudyReminders';
+import { ConfirmDialog } from './ui/ConfirmDialog';
 interface LayoutProps {
   children: React.ReactNode;
   user: User | null;
@@ -319,33 +319,19 @@ export const Layout: React.FC<LayoutProps> = ({ children, user, onLogout, fallba
         </div>
       </main>
 
-      {/* Logout Confirmation Modal */}
-      {showLogoutConfirm && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center px-4">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowLogoutConfirm(false)} />
-          <div className="relative bg-background border border-black/20 dark:border-white/10 rounded-2xl p-8 max-w-sm w-full shadow-2xl animate-fade-in-up">
-            <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 mb-4 mx-auto">
-              <AlertTriangle size={24} />
-            </div>
-            <h3 className="text-xl font-bold text-textMain text-center mb-2">{t('logout.title')}</h3>
-            <p className="text-textMuted text-center mb-6">{t('logout.body')}</p>
-            <div className="flex gap-4">
-              <button
-                onClick={() => setShowLogoutConfirm(false)}
-                className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-textMain border border-black/20 dark:border-white/10 font-medium transition-colors"
-              >
-                {t('common.cancel')}
-              </button>
-              <button
-                onClick={confirmLogout}
-                className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium transition-colors"
-              >
-                {t('nav.logout')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Logout confirmation. This modal is what ConfirmDialog was modelled
+          on; using the shared component here keeps the one design in one
+          place, and gains the focus trap and scroll lock it did not have. */}
+      <ConfirmDialog
+        isOpen={showLogoutConfirm}
+        title={t('logout.title')}
+        message={t('logout.body')}
+        confirmLabel={t('nav.logout')}
+        cancelLabel={t('common.cancel')}
+        variant="danger"
+        onConfirm={confirmLogout}
+        onCancel={() => setShowLogoutConfirm(false)}
+      />
       <CommandPalette isOpen={commandPaletteOpen} onClose={() => setCommandPaletteOpen(false)} />
       <ShortcutsModal isOpen={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
       <ScrollToTop />

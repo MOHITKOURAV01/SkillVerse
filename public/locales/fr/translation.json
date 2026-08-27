@@ -19,7 +19,8 @@
       "beginner": "Débutant",
       "intermediate": "Intermédiaire",
       "advanced": "Avancé"
-    }
+    },
+    "confirmTitle": "Êtes-vous sûr ?"
   },
   "dashboard": {
     "loading": "Chargement du tableau de bord...",
@@ -173,6 +174,11 @@
       "body": "Une erreur s'est produite lors du chargement du cours. Vérifiez votre connexion et réessayez.",
       "retry": "Réessayer",
       "backToCourses": "Retour aux cours"
+    },
+    "reviews": {
+      "deleteConfirmTitle": "Supprimer votre avis",
+      "deleteConfirmBody": "Votre note et votre commentaire seront retirés de ce cours. Cette action est irréversible.",
+      "deleteConfirmAction": "Supprimer l'avis"
     }
   },
   "aiAssistant": {
@@ -498,6 +504,9 @@
     "emptySubtitle": "Soyez le premier à poser une question ou à laisser une note sur cette leçon !",
     "time": {
       "justNow": "À l'instant"
-    }
+    },
+    "deleteConfirmTitle": "Supprimer le commentaire",
+    "deleteConfirmBody": "Votre commentaire sera retiré de cette discussion. Cette action est irréversible.",
+    "deleteConfirmAction": "Supprimer le commentaire"
   }
 }

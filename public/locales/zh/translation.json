@@ -19,7 +19,8 @@
       "beginner": "初级",
       "intermediate": "中级",
       "advanced": "高级"
-    }
+    },
+    "confirmTitle": "确定吗？"
   },
   "dashboard": {
     "loading": "正在加载仪表板...",
@@ -173,6 +174,11 @@
       "body": "获取课程时出错。请检查网络连接后重试。",
       "retry": "重试",
       "backToCourses": "返回课程列表"
+    },
+    "reviews": {
+      "deleteConfirmTitle": "删除你的评价",
+      "deleteConfirmBody": "你的评分和评论将从该课程中移除。此操作无法撤销。",
+      "deleteConfirmAction": "删除评价"
     }
   },
   "aiAssistant": {
@@ -498,6 +504,9 @@
     "emptySubtitle": "成为第一个在本课提问或留下的心得的人吧！",
     "time": {
       "justNow": "刚刚"
-    }
+    },
+    "deleteConfirmTitle": "删除评论",
+    "deleteConfirmBody": "你的评论将从该讨论中移除。此操作无法撤销。",
+    "deleteConfirmAction": "删除评论"
   }
 }

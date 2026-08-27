@@ -19,7 +19,8 @@
       "beginner": "مبتدئ",
       "intermediate": "متوسط",
       "advanced": "متقدم"
-    }
+    },
+    "confirmTitle": "هل أنت متأكد؟"
   },
   "dashboard": {
     "loading": "جاري تحميل لوحة التحكم...",
@@ -173,6 +174,11 @@
       "body": "حدث خطأ أثناء جلب الدورة. تحقّق من اتصالك وحاول مرة أخرى.",
       "retry": "إعادة المحاولة",
       "backToCourses": "العودة إلى الدورات"
+    },
+    "reviews": {
+      "deleteConfirmTitle": "حذف تقييمك",
+      "deleteConfirmBody": "سيتم حذف تقييمك وتعليقك من هذه الدورة. لا يمكن التراجع عن هذا الإجراء.",
+      "deleteConfirmAction": "حذف التقييم"
     }
   },
   "aiAssistant": {
@@ -498,6 +504,9 @@
     "emptySubtitle": "كن أول من يطرح سؤالاً أو يترك ملاحظة حول هذا الدرس!",
     "time": {
       "justNow": "الآن"
-    }
+    },
+    "deleteConfirmTitle": "حذف التعليق",
+    "deleteConfirmBody": "سيتم حذف تعليقك من هذه المناقشة. لا يمكن التراجع عن هذا الإجراء.",
+    "deleteConfirmAction": "حذف التعليق"
   }
 }

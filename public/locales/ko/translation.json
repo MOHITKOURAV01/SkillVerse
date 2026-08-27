@@ -19,7 +19,8 @@
       "beginner": "초급",
       "intermediate": "중급",
       "advanced": "고급"
-    }
+    },
+    "confirmTitle": "정말 삭제하시겠습니까?"
   },
   "dashboard": {
     "loading": "대시보드를 불러오는 중...",
@@ -173,6 +174,11 @@
       "body": "코스를 가져오는 중 문제가 발생했습니다. 연결을 확인한 후 다시 시도해 주세요.",
       "retry": "다시 시도",
       "backToCourses": "코스 목록으로"
+    },
+    "reviews": {
+      "deleteConfirmTitle": "내 리뷰 삭제",
+      "deleteConfirmBody": "평점과 댓글이 이 강의에서 삭제됩니다. 이 작업은 되돌릴 수 없습니다.",
+      "deleteConfirmAction": "리뷰 삭제"
     }
   },
   "aiAssistant": {
@@ -498,6 +504,9 @@
     "emptySubtitle": "이 강의에 첫 번째 질문이나 메모를 남겨보세요!",
     "time": {
       "justNow": "방금 전"
-    }
+    },
+    "deleteConfirmTitle": "댓글 삭제",
+    "deleteConfirmBody": "댓글이 이 토론에서 삭제됩니다. 이 작업은 되돌릴 수 없습니다.",
+    "deleteConfirmAction": "댓글 삭제"
   }
 }

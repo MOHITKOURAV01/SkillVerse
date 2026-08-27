@@ -20,6 +20,7 @@ import {
 import { firestoreService } from "../services/firestoreService";
 import { ReportContentButton } from "./ReportContentButton";
 import { useToast } from "../contexts/ToastContext";
+import { useConfirm } from "../hooks/useConfirm";
 import { User, LessonComment } from "../types";
 
 interface LessonDiscussionProps {
@@ -43,6 +44,7 @@ export const LessonDiscussion: React.FC<LessonDiscussionProps> = ({
 }) => {
   const { t } = useTranslation();
   const { showToast } = useToast();
+  const { confirm, confirmDialog } = useConfirm();
   const [isOpen, setIsOpen] = useState(true);
   const [comments, setComments] = useState<LessonComment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -205,7 +207,14 @@ export const LessonDiscussion: React.FC<LessonDiscussionProps> = ({
   };
 
   const handleDelete = async (commentId: string) => {
-    if (!confirm("Delete this comment? This cannot be undone.")) return;
+    const ok = await confirm({
+      title: t("lessonDiscussion.deleteConfirmTitle"),
+      message: t("lessonDiscussion.deleteConfirmBody"),
+      confirmLabel: t("lessonDiscussion.deleteConfirmAction"),
+      cancelLabel: t("common.cancel"),
+      variant: "danger",
+    });
+    if (!ok) return;
     try {
       const updated = await firestoreService.deleteLessonComment(
         commentId,
@@ -751,6 +760,8 @@ export const LessonDiscussion: React.FC<LessonDiscussionProps> = ({
           )}
         </div>
       )}
+
+      {confirmDialog}
     </div>
   );
 };

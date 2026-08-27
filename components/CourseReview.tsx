@@ -4,6 +4,7 @@ import { Star, Loader2, MessageSquareText, Trash2 } from 'lucide-react';
 import { firestoreService } from '../services/firestoreService';
 import { ReportContentButton } from './ReportContentButton';
 import { useToast } from '../contexts/ToastContext';
+import { useConfirm } from '../hooks/useConfirm';
 import { User, CourseReview as CourseReviewType } from '../types';
 
 interface CourseReviewProps {
@@ -22,6 +23,7 @@ const AVATARS: Record<string, string> = {
 export const CourseReview: React.FC<CourseReviewProps> = ({ courseId, user }) => {
     const { t } = useTranslation();
     const { showToast } = useToast();
+    const { confirm, confirmDialog } = useConfirm();
     const [reviews, setReviews] = useState<CourseReviewType[]>([]);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
@@ -124,7 +126,14 @@ export const CourseReview: React.FC<CourseReviewProps> = ({ courseId, user }) =>
 
     const handleDeleteReview = async () => {
         if (!user || !myReview) return;
-        if (!confirm('Delete your review? This cannot be undone.')) return;
+        const ok = await confirm({
+            title: t('courseView.reviews.deleteConfirmTitle'),
+            message: t('courseView.reviews.deleteConfirmBody'),
+            confirmLabel: t('courseView.reviews.deleteConfirmAction'),
+            cancelLabel: t('common.cancel'),
+            variant: 'danger',
+        });
+        if (!ok) return;
         try {
             const updated = await firestoreService.deleteCourseReview(courseId, myReview.userId || user.uid || user.email);
             setReviews(updated);
@@ -305,6 +314,8 @@ export const CourseReview: React.FC<CourseReviewProps> = ({ courseId, user }) =>
                     ))}
                 </div>
             )}
+
+            {confirmDialog}
         </div>
     );
 };

@@ -8,6 +8,7 @@ import {
 import { firestoreService } from '../services/firestoreService';
 import { Course, Company, QuizQuestion, Chapter, Lesson, Category, ContentReport, ReportStatus } from '../types';
 import { useToast } from '../contexts/ToastContext';
+import { useConfirm } from '../hooks/useConfirm';
 import { CATEGORIES } from '../constants';
 
 const REPORT_REASON_LABELS: Record<string, string> = {
@@ -20,6 +21,7 @@ const REPORT_REASON_LABELS: Record<string, string> = {
 
 export const AdminDashboard: React.FC = () => {
   const { showToast } = useToast();
+  const { confirm, confirmDialog } = useConfirm();
   const [activeTab, setActiveTab] = useState<'courses' | 'quizzes' | 'prep' | 'moderation'>('courses');
   const [loading, setLoading] = useState(true);
   const [seeding, setSeeding] = useState(false);
@@ -234,7 +236,14 @@ export const AdminDashboard: React.FC = () => {
   };
 
   const handleDeleteCourse = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this course and its quiz?')) return;
+    const ok = await confirm({
+      title: 'Delete course',
+      message: 'This deletes the course and its quiz for everyone. This cannot be undone.',
+      confirmLabel: 'Delete course',
+      variant: 'danger',
+      requireTypedConfirmation: 'DELETE',
+    });
+    if (!ok) return;
     try {
       await firestoreService.deleteCourse(id);
       showToast({ message: 'Course deleted successfully.', type: 'success' });
@@ -283,7 +292,14 @@ export const AdminDashboard: React.FC = () => {
   };
 
   const handleDeleteChapter = async (chapId: string) => {
-    if (!selectedCourse || !confirm('Delete this chapter and all its lessons?')) return;
+    if (!selectedCourse) return;
+    const ok = await confirm({
+      title: 'Delete chapter',
+      message: 'The chapter and every lesson inside it will be removed. This cannot be undone.',
+      confirmLabel: 'Delete chapter',
+      variant: 'danger',
+    });
+    if (!ok) return;
     const updatedChapters = (selectedCourse.chapters || []).filter(c => c.id !== chapId);
     try {
       const compiled = compileContent(selectedCourse.title, updatedChapters);
@@ -355,7 +371,14 @@ export const AdminDashboard: React.FC = () => {
   };
 
   const handleDeleteLesson = async (lesId: string) => {
-    if (!selectedCourse || !selectedChapter || !confirm('Delete this lesson?')) return;
+    if (!selectedCourse || !selectedChapter) return;
+    const ok = await confirm({
+      title: 'Delete lesson',
+      message: 'This lesson will be removed from the chapter. This cannot be undone.',
+      confirmLabel: 'Delete lesson',
+      variant: 'danger',
+    });
+    if (!ok) return;
 
     let updatedChapters = [...(selectedCourse.chapters || [])];
     const targetChapIndex = updatedChapters.findIndex(c => c.id === selectedChapter.id);
@@ -427,7 +450,13 @@ export const AdminDashboard: React.FC = () => {
   };
 
   const handleDeleteQuestion = async (index: number) => {
-    if (!confirm('Delete this question?')) return;
+    const ok = await confirm({
+      title: 'Delete question',
+      message: 'This quiz question will be removed and the remaining questions renumbered.',
+      confirmLabel: 'Delete question',
+      variant: 'danger',
+    });
+    if (!ok) return;
     const updated = quizQuestions.filter((_, idx) => idx !== index).map((q, i) => ({ ...q, id: i + 1 }));
     try {
       await firestoreService.updateQuiz(selectedQuizCourseId, updated);
@@ -490,7 +519,13 @@ export const AdminDashboard: React.FC = () => {
   };
 
   const handleDeleteCompany = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this company?')) return;
+    const ok = await confirm({
+      title: 'Delete company',
+      message: 'This removes the company and all of its interview questions. This cannot be undone.',
+      confirmLabel: 'Delete company',
+      variant: 'danger',
+    });
+    if (!ok) return;
     try {
       await firestoreService.deleteCompany(id);
       showToast({ message: 'Company deleted successfully.', type: 'success' });
@@ -526,15 +561,24 @@ export const AdminDashboard: React.FC = () => {
         </div>
         <button
           onClick={async () => {
-            if (!confirm("Warning: This will overwrite all courses with the default templates. Any custom changes to default courses will be lost! Are you sure?")) return;
+            const ok = await confirm({
+              title: 'Re-seed the database?',
+              message:
+                'Every course will be overwritten with the default template. Any custom changes to the default courses will be lost.',
+              confirmLabel: 'Overwrite courses',
+              variant: 'warning',
+              requireTypedConfirmation: 'RESEED',
+            });
+            if (!ok) return;
+
             try {
               setSeeding(true);
               await firestoreService.forceReseedDatabase();
               await refreshData();
-              alert("Successfully re-seeded the database!");
+              showToast({ message: 'Database re-seeded successfully.', type: 'success' });
             } catch (e) {
               console.error(e);
-              alert("Error re-seeding database.");
+              showToast({ message: 'Failed to re-seed the database.', type: 'error' });
             } finally {
               setSeeding(false);
             }
@@ -1031,8 +1075,15 @@ export const AdminDashboard: React.FC = () => {
                               Edit Solution
                             </button>
                             <button
-                              onClick={() => {
-                                if (!confirm('Delete this question?')) return;
+                              onClick={async () => {
+                                const ok = await confirm({
+                                  title: 'Delete question',
+                                  message: `"${q.title}" will be removed from ${selectedCompany.name}.`,
+                                  confirmLabel: 'Delete question',
+                                  variant: 'danger',
+                                });
+                                if (!ok) return;
+
                                 const updated = (selectedCompany.questions || []).filter(item => item.id !== q.id);
                                 firestoreService.updateCompany(selectedCompany.id, { questions: updated })
                                   .then(() => {
@@ -1396,6 +1447,8 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </div>
       )}
+
+      {confirmDialog}
     </div>
   );
 };

@@ -20,7 +20,8 @@
       "beginner": "Beginner",
       "intermediate": "Intermediate",
       "advanced": "Advanced"
-    }
+    },
+    "confirmTitle": "Are you sure?"
   },
   "dashboard": {
     "loading": "Loading dashboard...",
@@ -192,6 +193,11 @@
       "body": "Something went wrong while fetching the course. Check your connection and try again.",
       "retry": "Try again",
       "backToCourses": "Back to courses"
+    },
+    "reviews": {
+      "deleteConfirmTitle": "Delete your review",
+      "deleteConfirmBody": "Your rating and comment will be removed from this course. This cannot be undone.",
+      "deleteConfirmAction": "Delete review"
     }
   },
   "aiAssistant": {
@@ -517,6 +523,9 @@
     "emptySubtitle": "Be the first to ask a question or leave a note on this lesson!",
     "time": {
       "justNow": "Just now"
-    }
+    },
+    "deleteConfirmTitle": "Delete comment",
+    "deleteConfirmBody": "Your comment will be removed from this discussion. This cannot be undone.",
+    "deleteConfirmAction": "Delete comment"
   }
 }
