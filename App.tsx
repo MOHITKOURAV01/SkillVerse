@@ -26,6 +26,7 @@ const Certificate = lazy(() => import('./components/Certificate').then(m => ({ d
 const Settings = lazy(() => import('./components/Settings').then(m => ({ default: m.Settings })));
 const CoursesList = lazy(() => import('./components/CoursesList').then(m => ({ default: m.CoursesList })));
 const SavedCourses = lazy(() => import('./components/SavedCourses').then(m => ({ default: m.SavedCourses })));
+const NotesPage = lazy(() => import('./components/NotesPage').then(m => ({ default: m.NotesPage })));
 const Roadmap = lazy(() => import('./components/Roadmap').then(m => ({ default: m.Roadmap })));
 const CertificationsList = lazy(() => import('./components/CertificationsList').then(m => ({ default: m.CertificationsList })));
 const CareerMode = lazy(() => import('./components/CareerMode').then(m => ({ default: m.CareerMode })));
@@ -122,6 +123,7 @@ const AppRoutes = () => {
                           <Route path="/" element={<Dashboard user={appUser} />} />
                           <Route path="/courses" element={<CoursesList />} />
                           <Route path="/saved" element={<SavedCourses />} />
+                          <Route path="/notes" element={<NotesPage />} />
                           <Route path="/roadmap" element={<Roadmap user={appUser} />} />
                           <Route path="/playground" element={<CodingPracticePlayground />} />
                           <Route path="/career" element={<CareerMode user={appUser} />} />

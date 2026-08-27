@@ -2,6 +2,7 @@
   "nav": {
     "dashboard": "대시보드",
     "courses": "코스",
+    "notes": "노트",
     "career": "커리어 모드",
     "certifications": "자격증",
     "admin": "관리자",
